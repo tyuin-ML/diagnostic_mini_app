@@ -1,8 +1,8 @@
+from datetime import datetime
 import streamlit as st
 
 st.title("Быстрый отчет о диагностике/замене ✍")
 
-# Переносим инициализацию session_state в самое начало скрипта
 if "fullreportarr" not in st.session_state:
     st.session_state.fullreportarr = None
 
@@ -23,31 +23,49 @@ workreport = st.text_area(
     placeholder="Расскажите что было заменено или какая проблема была диагностирована"
 )
 
-# Инициализируем значение чекбокса по умолчанию (для "Замена узла" оно будет None или False)
-resolved = None
-
 if worktype == "Диагностика":
     resolved = st.checkbox("Проблема устранена")
+else:
+    resolved = None
 
-# Кнопку и логику отправки лучше вынести из-под условия text_area,
-# а проверку на заполненность сделать внутри нажатия кнопки
+# --- ОБНОВЛЕННЫЙ БЛОК: Выбор даты и часа ---
+st.write("**Дата и время проведения работ**")
+use_current_time = st.checkbox("Использовать текущее время (Сейчас)", value=True)
+
+now = datetime.now()
+
+if use_current_time:
+    report_date = now.date()
+    report_hour = now.hour
+    st.info(f"Будет сохранено: {report_date.strftime('%d.%m.%Y')} в {report_hour}:00")
+else:
+    col1, col2 = st.columns(2)
+    with col1:
+        report_date = st.date_input("Выберите дату", value=datetime.today())
+    with col2:
+        # Удобный ползунок для выбора часа вместо выпадающего списка
+        report_hour = st.time_input("Выберите час", value = None)
+
+# Формируем итоговую дату с точностью до часа (минуты и секунды сбрасываем в 00:00)
+final_datetime = f"{report_date} {report_hour:02d}:00:00"
+# --------------------------------------------
+
 if st.button("Отправить отчет"):
     if not workreport:
         st.error("Пожалуйста, заполните описание результатов работ!")
     elif pointnumber is None:
         st.error("Пожалуйста, укажите номер узла!")
     else:
-        # Формируем итоговый словарь
         st.session_state.fullreportarr = {
+            "datetime": final_datetime,
             "worktype": worktype,
-            "worktype_id": worktypearr[worktype], # Добавили ID типа работы (0 или 1)
+            "worktype_id": worktypearr[worktype],
             "pointnumber": pointnumber,
             "workreport": workreport,
-            "problem_resolved": resolved # Сюда запишется True/False для диагностики и None для замены
+            "problem_resolved": resolved
         }
         st.success("Отчет успешно сформирован!")
 
-# Вывод результата всегда находится вне условий кнопок, чтобы данные не исчезали
 if st.session_state.fullreportarr is not None:
     st.write("### Текущий сохраненный отчет:")
-    st.json(st.session_state.fullreportarr) # st.json выглядит аккуратнее для словарей
+    st.json(st.session_state.fullreportarr)
