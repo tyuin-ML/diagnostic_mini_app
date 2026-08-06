@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import streamlit as st
 
 hide_streamlit_style = """
@@ -41,7 +42,7 @@ else:
 st.write("**Дата и время проведения работ**")
 use_current_time = st.checkbox("Использовать текущее время (Сейчас)", value=True)
 
-now = datetime.now()
+now = datetime.now(ZoneInfo("Europe/Moscow"))
 
 if use_current_time:
     report_date = now.date()
