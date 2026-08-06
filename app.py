@@ -79,14 +79,3 @@ if st.session_state.fullreportarr is not None:
     st.write("### Текущий сохраненный отчет:")
     st.json(st.session_state.fullreportarr)
 
-
-# Передаем CSS как строку внутрь HTML-тегов <style>
-st.markdown("""
-    <style>
-    footer {
-        visibility: hidden;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-st.write("Теперь футер скрыт без ошибок!")
