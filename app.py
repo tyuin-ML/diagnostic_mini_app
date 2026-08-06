@@ -1,8 +1,6 @@
 from datetime import datetime
 import streamlit as st
 
-footer {visibility: hidden;}
-
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
@@ -80,3 +78,6 @@ if st.button("Отправить отчет"):
 if st.session_state.fullreportarr is not None:
     st.write("### Текущий сохраненный отчет:")
     st.json(st.session_state.fullreportarr)
+
+
+footer {visibility: hidden;}
