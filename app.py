@@ -1,6 +1,8 @@
 from datetime import datetime
 import streamlit as st
 
+footer {visibility: hidden;}
+
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
